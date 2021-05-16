@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+	<!-- Products -->
+    
+    {% block body %}
+        <div class="total-ads main-grid-border">
+            <div class="container">
+               <div class="select-box">
+                    <div class="browse-category ads-list">
+                        <label>Browse Categories</label>
+                        <select class="selectpicker show-tick" data-live-search="true">
+                        {% for category in category_list %} 
+                            {% comment %} <option data-tokens="Mobiles"><a href="{% url 'products:product_list'%}">{{category}}</a></option> {% endcomment %}
+                            <option data-tokens="Mobiles"><a href="{% url 'products:product_list_category' category.category_slug %}">{{category}}</a></option>
+                        {% endfor %}
+                        </select>
+                    </div>
+                    <div class="search-product ads-list">
+                        <label>Search for a specific product</label>
+                        <div class="search">
+                            <div id="custom-search-input">
+                            <div class="input-group">
+                                <input type="text" class="form-control input-lg" placeholder="Buscar" />
+                                <span class="input-group-btn">
+                                    <button class="btn btn-info btn-lg" type="button">
+                                        <i class="glyphicon glyphicon-search"></i>
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                </div> 
+                <div class="all-categories">
+                    <h3> Select your category and find the perfect ad</h3>
+                    <ul class="all-cat-list">
+                    
+                    {% for category in category_list %}
+                        {% comment %} <li><a href="{% url 'products:product_list_category' category.category_slug %}">{{category}}<span class="num-of-ads">({{category.total_products}})</span></a></li>   {% endcomment %}
+                         <li><a href="{% url 'products:product_list_category' category.category_slug %}">{{category}}<span class="num-of-ads">({{category.total_products}})</span></a></li>  
+                    {% endfor %}
+                    </ul>
+                </div>
+                <ol class="breadcrumb" style="margin-bottom: 5px;">
+                <li><a href="index.html">Home</a></li>
+                <li class="active"><a href="{% url 'products:product_list'%}"> All Ads </a></li> 
+                 
+                 {% if category %}
+                      <li class="active">{{category}}</li>
+                 {% endif %}
+                     
+                </ol>
+                <div class="ads-grid">
+                    <div class="side-bar col-md-3">
+                        <div class="search-hotel">
+                        <h3 class="sear-head">Search</h3>
+                        <form method="GET" action="{% url 'products:product_list' %}">
+                            <input type="text" value="Product name..." name="q" onfocus="this.value = '';" onblur="if (this.value == '') {this.value = 'Product name...';}" required="">
+                            <input type="submit" value=" ">
+                        </form>
+                    </div>
+                    
+                    <div class="featured-ads">
+                        <h2 class="sear-head fer">Featured Ads</h2>
+                        
+                        {% for product in product_list %}
+                            <div class="featured-ad">
+                                {% comment %} <a href="{% url 'products:product_list' %}"> {% endcomment %}
+                                 <a href="{% url 'products:product_detail' product.slug %}">
+                                    <div class="featured-ad-left">
+                                        <img src={{product.image.url}} title="ad image" alt="" />
+                                    </div>
+                                    <div class="featured-ad-right">
+                                        <h4>{{product.name}}</h4>
+                                        <p>$ {{ product.price }}</p>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                </a>
+                            </div>
+                        {% endfor %}
+                        <div class="clearfix"></div>
+                    </div>
+                    </div>
+                    <div class="ads-display col-md-9">
+                        <div class="wrapper">					
+                        <div class="bs-example bs-example-tabs" role="tabpanel" data-example-id="togglable-tabs">
+                        <ul id="myTab" class="nav nav-tabs nav-tabs-responsive" role="tablist">
+                        </ul>
+                        <div id="myTabContent" class="tab-content">
+                            <div role="tabpanel" class="tab-pane fade in active" id="home" aria-labelledby="home-tab">
+                            <div>
+                                                    <div id="container">
+                                    <div class="clearfix"></div>
+                                <ul class="list">
+                                
+                                {% for product in product_list %}
+                                 <!-- products in url is from namespace in main url, and products contain 
+                                    name product_list in product sub urls, product.slug contain in product_list, 
+                                    then include app_name which is also product -->
+                                    <a href="{% url 'products:product_detail' product.slug %}">
+                                        <li>
+                                        <img src={{product.image.url}} class="img-thumbnail" title="" alt="" />
+                                        <section class="list-left">
+                                        <h5 class="title">{{product.name}}</h5>
+                                        <span class="adprice">${{product.price}}</span>
+                                        <p class="catpath">{{product.brand}}</p>
+                                        </section>
+                                        <section class="list-right">
+                                        <span class="date">Date, {{product.created}}</span>
+                                        <span class="cityname">City name</span>
+                                        </section>
+                                        <div class="clearfix"></div>
+                                        </li> 
+                                    </a>
+                                 {% endfor %}    
+                                </ul>
+                            </div>
+                                </div>
+                            </div>
+                           
+                           <div class="pagination">
+                                <span class="step-links">
+                                        {% if page_obj.has_previous %}
+                                           <a class="page-item" href="?page=1">&laquo; first</a>
+                                           <a class="page-item" href="?page={{ page_obj.previous_page_number }}">previous</a>
+                                        {% endif %}
+
+                                        <span class="current page-item">
+                                            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                                        </span>
+
+                                        {% if page_obj.has_next %}
+                                            <a class="page-item" href="?page={{ page_obj.next_page_number }}">next</a>
+                                             <a class="page-item" href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+                                        {% endif %}    
+                                </span>
+                            </div> 
+                        </div>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+            </div>	
+        </div>
+    {% endblock body %}
